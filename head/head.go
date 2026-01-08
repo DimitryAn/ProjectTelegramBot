@@ -1,22 +1,22 @@
 package head
 
 import (
-	"bot/third_party"
+	"bot/internal"
 	"log"
 	"sync"
 	"time"
 )
 
 type Tools struct {
-	fetcher third_party.Fetcher
-	procces third_party.Processer
+	fetcher   internal.Fetcher
+	processor internal.Processor
 }
 
 // инициализация фетчера и процессора
-func New(tf third_party.Fetcher, pr third_party.Processer) *Tools {
+func New(tf internal.Fetcher, pr internal.Processor) *Tools {
 	return &Tools{
-		fetcher: tf,
-		procces: pr,
+		fetcher:   tf,
+		processor: pr,
 	}
 }
 
@@ -43,7 +43,7 @@ func (t *Tools) Work() {
 			log.Printf("message - %s, from - %s", msg.Text, msg.Username)
 
 			wg.Go(func() {
-				err := t.procces.MakeResponse(msg.Text, msg.ChatID, msg.Username)
+				err := t.processor.MakeResponse(msg.Text, msg.ChatID, msg.Username)
 				if err != nil {
 					log.Print(err)
 				}

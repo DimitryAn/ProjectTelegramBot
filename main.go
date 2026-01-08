@@ -3,8 +3,8 @@ package main
 import (
 	"bot/clients/telegramClients"
 	"bot/head"
+	"bot/internal/tg"
 	"bot/storage/sqlite"
-	"bot/third_party/tg"
 	"context"
 	"flag"
 	"log"
@@ -38,10 +38,10 @@ func main() {
 	fetcher := tg.NewFetcher(client, limit)
 
 	//инициалищация процессора (работает с базой данных + обработка сообщений из тг)
-	procceser := tg.NewProcesser(client, sqlDb, context.TODO())
+	processor := tg.NewProcessor(client, sqlDb, context.TODO())
 
 	// запуск цикла, управляет фетчером и процессором
-	h := head.New(fetcher, procceser)
+	h := head.New(fetcher, processor)
 	h.Work()
 }
 
