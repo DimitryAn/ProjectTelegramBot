@@ -1,7 +1,6 @@
 package head
 
 import (
-	"bot/storage"
 	"bot/third_party"
 	"log"
 	"sync"
@@ -9,9 +8,8 @@ import (
 )
 
 type Tools struct {
-	fetcher  third_party.Fetcher
-	procces  third_party.Processer
-	dbWroker storage.Operation
+	fetcher third_party.Fetcher
+	procces third_party.Processer
 }
 
 // инициализация фетчера и процессора
