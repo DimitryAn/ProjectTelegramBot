@@ -7,13 +7,23 @@ import (
 	"time"
 )
 
+type Processor interface {
+	// Метод для обработки запроса пользователя и отправки ответа в чат
+	MakeResponse(text string, chatID int, userName string) error
+}
+
+type Fetcher interface {
+	// Метод для извлечения сообщений из чата телеграмма
+	FetchMessage() ([]internal.Message, error)
+}
+
 type Tools struct {
-	fetcher   internal.Fetcher
-	processor internal.Processor
+	fetcher   Fetcher
+	processor Processor
 }
 
 // инициализация фетчера и процессора
-func New(tf internal.Fetcher, pr internal.Processor) *Tools {
+func New(tf Fetcher, pr Processor) *Tools {
 	return &Tools{
 		fetcher:   tf,
 		processor: pr,
