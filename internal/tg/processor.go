@@ -37,8 +37,7 @@ func NewProcessor(c *telegramClients.Client, db storage.Operation, ctx context.C
 func (p *Processor) MakeResponse(text string, chatID int, userName string) error {
 
 	if text != "" && text[0] == '/' {
-		//text = strings.TrimSpace(text)
-		strings.TrimSpace(text)
+		text = strings.TrimSpace(text)
 	}
 
 	switch text {
