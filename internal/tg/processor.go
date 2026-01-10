@@ -3,7 +3,6 @@ package tg
 import (
 	"bot/clients/telegramClients"
 	"bot/lib/errWrap"
-	"bot/storage"
 	"context"
 	"database/sql"
 	"errors"
@@ -18,14 +17,27 @@ const (
 	currentLimit   = 3
 )
 
+type Operation interface {
+	// Метод для сохранения новых заметок
+	Save(ctx context.Context, text string, userName string) error
+
+	// Метод для удаления заметок по полю text
+	// При необходимости можно удалить все записи, для этого
+	// необоходимо передать all = true
+	Delete(ctx context.Context, userName string, text string, all bool) error
+
+	// Извлечение заметок
+	Extract(ctx context.Context, userName string, cnt int) ([]string, error)
+}
+
 type Processor struct {
 	client *telegramClients.Client
-	db     storage.Operation
+	db     Operation
 	ctx    context.Context
 }
 
 // Инициализация процессора
-func NewProcessor(c *telegramClients.Client, db storage.Operation, ctx context.Context) *Processor {
+func NewProcessor(c *telegramClients.Client, db Operation, ctx context.Context) *Processor {
 	return &Processor{
 		client: c,
 		db:     db,
