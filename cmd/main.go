@@ -8,6 +8,9 @@ import (
 	"context"
 	"flag"
 	"log"
+	"os/signal"
+	"syscall"
+	"time"
 )
 
 const (
@@ -17,6 +20,8 @@ const (
 
 func main() {
 
+	ctx, stop := signal.NotifyContext(context.TODO(), syscall.SIGINT, syscall.SIGTERM)
+	defer stop()
 	//получение токенов
 	host, token := mustFlags()
 
@@ -26,7 +31,7 @@ func main() {
 	if err != nil {
 		log.Fatal("can't create Database ", err)
 	}
-	err = sqlDb.Init(context.TODO())
+	err = sqlDb.Init(ctx)
 	if err != nil {
 		log.Fatal("can't create Database")
 	}
@@ -38,11 +43,15 @@ func main() {
 	fetcher := tg.NewFetcher(client, limit)
 
 	//инициалищация процессора (работает с базой данных + обработка сообщений из тг)
-	processor := tg.NewProcessor(client, sqlDb, context.TODO())
+	processor := tg.NewProcessor(client, sqlDb, ctx)
 
 	// запуск цикла, управляет фетчером и процессором
 	h := start.New(fetcher, processor)
-	h.Work()
+	go h.Work(ctx)
+
+	<-ctx.Done()
+	time.Sleep(5 * time.Second)
+	log.Print("shut down program")
 }
 
 // Обрабатывает флаги при запуске программы
