@@ -1,8 +1,8 @@
 package tg
 
 import (
-	"bot/clients/telegramClients"
-	"bot/lib/errWrap"
+	"bot/internal/clients/tgclient"
+	"bot/internal/lib/errWrap"
 	"context"
 	"database/sql"
 	"errors"
@@ -31,13 +31,13 @@ type Operation interface {
 }
 
 type Processor struct {
-	client *telegramClients.Client
+	client *tgclient.Client
 	db     Operation
 	ctx    context.Context
 }
 
 // Инициализация процессора
-func NewProcessor(c *telegramClients.Client, db Operation, ctx context.Context) *Processor {
+func NewProcessor(c *tgclient.Client, db Operation, ctx context.Context) *Processor {
 	return &Processor{
 		client: c,
 		db:     db,

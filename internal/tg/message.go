@@ -1,4 +1,4 @@
-package internal
+package tg
 
 // Необходимые поля для обработки запроса пользователя
 type Message struct {

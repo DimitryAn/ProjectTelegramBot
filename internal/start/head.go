@@ -1,7 +1,7 @@
-package head
+package start
 
 import (
-	"bot/internal"
+	"bot/internal/tg"
 	"log"
 	"sync"
 	"time"
@@ -14,7 +14,7 @@ type Processor interface {
 
 type Fetcher interface {
 	// Метод для извлечения сообщений из чата телеграмма
-	FetchMessage() ([]internal.Message, error)
+	FetchMessage() ([]tg.Message, error)
 }
 
 type Tools struct {
