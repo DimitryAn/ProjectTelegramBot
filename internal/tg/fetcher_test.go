@@ -76,3 +76,17 @@ func TestFetchMessageSuccessfully(t *testing.T) {
 
 	mockReciver.AssertExpectations(t)
 }
+
+func TestFetchNilMessage(t *testing.T) {
+	mockReciver := mocks.NewMockReciver(t)
+	fetcher := tg.NewFetcher(mockReciver, limit)
+
+	mockReciver.On("Updates", limit, offset).Return([]tgclient.Update{{ID: 1, Message: nil}}, nil)
+
+	mesg, err := fetcher.FetchMessage()
+
+	assert.Empty(t, mesg)
+	assert.Nil(t, err)
+
+	mockReciver.AssertExpectations(t)
+}

@@ -47,7 +47,7 @@ func (tf *TgFetcher) FetchMessage() ([]Message, error) {
 		if temp.IsMessage {
 			resultMessage = append(resultMessage, *temp)
 		} else {
-			log.Print(UnknonwCommand)
+			log.Println(UnknonwCommand)
 		}
 
 	}
