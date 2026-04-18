@@ -2,6 +2,7 @@ package start
 
 import (
 	"bot/internal/tg"
+	"context"
 	"log"
 	"sync"
 	"time"
@@ -31,31 +32,37 @@ func New(tf Fetcher, pr Processor) *Tools {
 }
 
 // Запуск бота
-func (t *Tools) Work() {
+func (t *Tools) Work(ctx context.Context) {
 
-	log.Print("Start work!")
+	log.Println("Start work!")
 
 	for {
+		select {
+		case <-ctx.Done():
+			log.Println("stop working")
+			return
+		default:
+		}
 
 		messeges, err := t.fetcher.FetchMessage()
 		if len(messeges) != 0 {
-			log.Print("get new message")
+			log.Println("get new message")
 		}
 
 		if err != nil {
-			log.Print(err)
+			log.Println(err)
 			continue
 		}
 
 		var wg sync.WaitGroup
 
 		for _, msg := range messeges {
-			log.Printf("message - %s, from - %s", msg.Text, msg.Username)
+			log.Printf("message - %s, from - %s \n", msg.Text, msg.Username)
 
 			wg.Go(func() {
 				err := t.processor.MakeResponse(msg.Text, msg.ChatID, msg.Username)
 				if err != nil {
-					log.Print(err)
+					log.Println(err)
 				}
 			})
 		}
