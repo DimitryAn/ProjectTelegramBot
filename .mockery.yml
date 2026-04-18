@@ -1,0 +1,24 @@
+all: false
+dir: mocks
+force-file-write: false
+formatter: goimports
+log-level: info
+structname: '{{.Mock}}{{.InterfaceName}}'
+pkgname: t
+recursive: false
+template: testify
+packages:
+  bot/internal/tg:
+    config:
+      pkgname: "mocks"
+      dir: mocks/
+    interfaces:
+      Reciver: 
+        config:
+          filename: reciver.go
+      Sender:
+        config:
+          filename: sender.go
+      Operation:
+        config:
+          filename: operation.go
