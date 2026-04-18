@@ -10,18 +10,22 @@ const (
 	UnknonwCommand = "Unknonw command"
 )
 
+type Reciver interface {
+	Updates(limit int, offset int) ([]tgclient.Update, error)
+}
+
 type TgFetcher struct {
-	client *tgclient.Client
 	offset int
 	limit  int
+	client Reciver
 }
 
 // Инициализация фетчера
-func NewFetcher(client *tgclient.Client, limit int) *TgFetcher {
+func NewFetcher(client Reciver, limit int) *TgFetcher {
 	return &TgFetcher{
-		client: client,
 		offset: 0,
 		limit:  limit,
+		client: client,
 	}
 }
 

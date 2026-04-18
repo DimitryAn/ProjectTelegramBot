@@ -1,7 +1,6 @@
 package tg
 
 import (
-	"bot/internal/clients/tgclient"
 	"bot/internal/lib/errWrap"
 	"context"
 	"database/sql"
@@ -17,6 +16,10 @@ const (
 	currentLimit   = 3
 )
 
+type Sender interface {
+	SendMessage(chatID int, text string) error
+}
+
 type Operation interface {
 	// Метод для сохранения новых заметок
 	Save(ctx context.Context, text string, userName string) error
@@ -31,15 +34,15 @@ type Operation interface {
 }
 
 type Processor struct {
-	client *tgclient.Client
+	client Sender
 	db     Operation
 	ctx    context.Context
 }
 
 // Инициализация процессора
-func NewProcessor(c *tgclient.Client, db Operation, ctx context.Context) *Processor {
+func NewProcessor(s Sender, db Operation, ctx context.Context) *Processor {
 	return &Processor{
-		client: c,
+		client: s,
 		db:     db,
 		ctx:    ctx,
 	}
