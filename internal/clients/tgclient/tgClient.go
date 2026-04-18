@@ -1,7 +1,7 @@
-package telegramClients
+package tgclient
 
 import (
-	"bot/lib/errWrap"
+	"bot/internal/lib/errWrap"
 	"encoding/json"
 	"io"
 	"net/http"

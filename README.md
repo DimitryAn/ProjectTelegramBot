@@ -32,5 +32,5 @@ go build
 5. To launch the project, you need to pass flags with your bot's token and the messenger host.
 For example, for Telegram: 
 ```bash
-./bot -tgToken 'you're token' -host 'api.telegram.org'
+./bot -tgToken '<you're token>' -host '<api.telegram.org>'
 ```

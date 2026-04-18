@@ -1,4 +1,4 @@
-package telegramClients
+package tgclient
 
 // структура ответа от телеграмма
 type TgResponse struct {

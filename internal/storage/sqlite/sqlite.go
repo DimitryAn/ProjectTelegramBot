@@ -1,7 +1,7 @@
 package sqlite
 
 import (
-	"bot/lib/errWrap"
+	"bot/internal/lib/errWrap"
 	"context"
 	"database/sql"
 
