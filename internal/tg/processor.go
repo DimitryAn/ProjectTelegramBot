@@ -57,20 +57,20 @@ func (p *Processor) MakeResponse(text string, chatID int, userName string) error
 
 	switch text {
 	case "/start":
-		err := p.client.SendMessage(chatID, startCommand)
+		err := p.client.SendMessage(chatID, StartCommand)
 		if err != nil {
 			return errWrap.Wrap("/start", err)
 		}
 	case "/delete":
 		err := p.db.Delete(p.ctx, userName, text, deleteAll)
 		if errors.Is(err, sql.ErrNoRows) {
-			_ = p.client.SendMessage(chatID, emptyPageMessage)
+			_ = p.client.SendMessage(chatID, EmptyPageMessage)
 			return nil
 		}
 		if err != nil {
 			return errWrap.Wrap("can't delete text (makeResponse)", err)
 		}
-		_ = p.client.SendMessage(chatID, deleteCommand)
+		_ = p.client.SendMessage(chatID, DeleteCommand)
 	case "/check":
 		dates, err := p.db.Extract(p.ctx, userName, singleLimit)
 
@@ -79,7 +79,7 @@ func (p *Processor) MakeResponse(text string, chatID int, userName string) error
 		}
 
 		if len(dates) == 0 {
-			_ = p.client.SendMessage(chatID, emptyPageMessage)
+			_ = p.client.SendMessage(chatID, EmptyPageMessage)
 			return nil
 		}
 		_ = p.client.SendMessage(chatID, dates[0])
@@ -95,7 +95,7 @@ func (p *Processor) MakeResponse(text string, chatID int, userName string) error
 		}
 
 		if len(dates) == 0 {
-			_ = p.client.SendMessage(chatID, emptyPageMessage)
+			_ = p.client.SendMessage(chatID, EmptyPageMessage)
 			return nil
 		}
 
@@ -104,7 +104,7 @@ func (p *Processor) MakeResponse(text string, chatID int, userName string) error
 			_ = p.db.Delete(p.ctx, userName, data, deleteSpecific)
 		}
 	case "/help":
-		err := p.client.SendMessage(chatID, helpCommand)
+		err := p.client.SendMessage(chatID, HelpCommand)
 		if err != nil {
 			log.Print(err)
 		}
@@ -113,7 +113,7 @@ func (p *Processor) MakeResponse(text string, chatID int, userName string) error
 		if err != nil {
 			return errWrap.Wrap("can't save text (makeResponse)", err)
 		}
-		_ = p.client.SendMessage(chatID, saveMessage)
+		_ = p.client.SendMessage(chatID, SaveMessage)
 	}
 
 	return nil
