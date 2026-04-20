@@ -1,4 +1,4 @@
-name: golangci-lint
+name: ci with golangci-lint and my tests
 on:
   push:
     branches:
@@ -24,3 +24,13 @@ jobs:
         uses: golangci/golangci-lint-action@v9
         with:
           version: v2.11
+  tests:
+    name: tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-go@v6
+        with:
+          go-version: stable
+      - name: go-tests
+        run: go test ./...
