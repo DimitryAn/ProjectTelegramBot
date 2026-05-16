@@ -20,7 +20,7 @@ const (
 
 func main() {
 
-	ctx, stop := signal.NotifyContext(context.TODO(), syscall.SIGINT, syscall.SIGTERM)
+	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stop()
 	//получение токенов
 	host, token := mustFlags()

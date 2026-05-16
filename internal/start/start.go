@@ -39,7 +39,7 @@ func (t *Tools) Work(ctx context.Context) {
 	for {
 		select {
 		case <-ctx.Done():
-			log.Println("stop working")
+			log.Println("stop work")
 			return
 		default:
 		}
