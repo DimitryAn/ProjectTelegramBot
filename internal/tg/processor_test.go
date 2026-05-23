@@ -10,6 +10,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 )
 
 func TestCommandStart(t *testing.T) {
@@ -65,7 +66,48 @@ func TestCommandStart(t *testing.T) {
 			err := pr.MakeResponse(test.text, test.chatID, test.userName)
 
 			if !assert.Equal(t, test.expected, err) {
-				fmt.Println(err, test.expected)
+				fmt.Printf("Error in test %s, expected - %s, got - %s", test.testName, test.expected, err.Error())
+			}
+			mockDb.AssertExpectations(t)
+			mockSender.AssertExpectations(t)
+		})
+	}
+}
+
+func TestCommandDelete(t *testing.T) {
+	tests := []struct {
+		deleteAll bool
+		chatID    int
+		testName  string
+		text      string
+		userName  string
+		expected  error
+		mockSetup func(m *mocks.MockOperation, ms *mocks.MockSender)
+	}{
+		{
+			deleteAll: true,
+			chatID:    123,
+			testName:  "succesfully delete all notes",
+			text:      "/delete",
+			userName:  "user",
+			expected:  nil,
+			mockSetup: func(m *mocks.MockOperation, ms *mocks.MockSender) {
+				m.On("Delete", mock.Anything, "user", mock.Anything, true).Return(nil)
+				ms.On("SendMessage", 123, tg.DeleteCommand).Return(nil)
+			},
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.testName, func(t *testing.T) {
+			mockDb := mocks.NewMockOperation(t)
+			mockSender := mocks.NewMockSender(t)
+			test.mockSetup(mockDb, mockSender)
+			pr := tg.NewProcessor(mockSender, mockDb, context.Background())
+
+			err := pr.MakeResponse(test.text, test.chatID, test.userName)
+
+			if !assert.Equal(t, test.expected, err) {
 				fmt.Printf("Error in test %s, expected - %s, got - %s", test.testName, test.expected, err.Error())
 			}
 			mockDb.AssertExpectations(t)
