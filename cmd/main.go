@@ -43,7 +43,7 @@ func main() {
 	fetcher := tg.NewFetcher(client, limit)
 
 	//инициалищация процессора (работает с базой данных + обработка сообщений из тг)
-	processor := tg.NewProcessor(client, sqlDb, ctx)
+	processor := tg.NewProcessor(client, sqlDb)
 
 	// запуск цикла, управляет фетчером и процессором
 	h := start.New(fetcher, processor)

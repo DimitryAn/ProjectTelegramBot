@@ -10,7 +10,7 @@ import (
 
 type Processor interface {
 	// Метод для обработки запроса пользователя и отправки ответа в чат
-	MakeResponse(text string, chatID int, userName string) error
+	MakeResponse(ctx context.Context, text string, chatID int, userName string) error
 }
 
 type Fetcher interface {
@@ -60,7 +60,7 @@ func (t *Tools) Work(ctx context.Context) {
 			log.Printf("message - %s, from - %s \n", msg.Text, msg.Username)
 
 			wg.Go(func() {
-				err := t.processor.MakeResponse(msg.Text, msg.ChatID, msg.Username)
+				err := t.processor.MakeResponse(ctx, msg.Text, msg.ChatID, msg.Username)
 				if err != nil {
 					log.Println(err)
 				}
