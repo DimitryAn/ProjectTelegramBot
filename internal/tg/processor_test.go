@@ -61,9 +61,9 @@ func TestCommandStart(t *testing.T) {
 			mockDb := mocks.NewMockOperation(t)
 			mockSender := mocks.NewMockSender(t)
 			test.mockSetup(mockSender)
-			pr := tg.NewProcessor(mockSender, mockDb, context.Background())
+			pr := tg.NewProcessor(mockSender, mockDb)
 
-			err := pr.MakeResponse(test.text, test.chatID, test.userName)
+			err := pr.MakeResponse(context.Background(), test.text, test.chatID, test.userName)
 
 			if !assert.Equal(t, test.expected, err) {
 				fmt.Printf("Error in test %s, expected - %s, got - %s", test.testName, test.expected, err.Error())
@@ -103,9 +103,9 @@ func TestCommandDelete(t *testing.T) {
 			mockDb := mocks.NewMockOperation(t)
 			mockSender := mocks.NewMockSender(t)
 			test.mockSetup(mockDb, mockSender)
-			pr := tg.NewProcessor(mockSender, mockDb, context.Background())
+			pr := tg.NewProcessor(mockSender, mockDb)
 
-			err := pr.MakeResponse(test.text, test.chatID, test.userName)
+			err := pr.MakeResponse(context.Background(), test.text, test.chatID, test.userName)
 
 			if !assert.Equal(t, test.expected, err) {
 				fmt.Printf("Error in test %s, expected - %s, got - %s", test.testName, test.expected, err.Error())
@@ -121,9 +121,9 @@ func TestSaveWithErr(t *testing.T) {
 	mockSender := mocks.NewMockSender(t)
 	mockDb.On("Save", context.Background(), "my message", "u").Return(assert.AnError)
 
-	pr := tg.NewProcessor(mockSender, mockDb, context.Background())
+	pr := tg.NewProcessor(mockSender, mockDb)
 
-	err := pr.MakeResponse("my message", 123, "u")
+	err := pr.MakeResponse(context.Background(), "my message", 123, "u")
 
 	assert.Error(t, err)
 	mockDb.AssertExpectations(t)

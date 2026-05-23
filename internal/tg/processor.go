@@ -36,20 +36,18 @@ type Operation interface {
 type Processor struct {
 	client Sender
 	db     Operation
-	ctx    context.Context
 }
 
 // Инициализация процессора
-func NewProcessor(s Sender, db Operation, ctx context.Context) *Processor {
+func NewProcessor(s Sender, db Operation) *Processor {
 	return &Processor{
 		client: s,
 		db:     db,
-		ctx:    ctx,
 	}
 }
 
 // Обработка команды от пользователя
-func (p *Processor) MakeResponse(text string, chatID int, userName string) error {
+func (p *Processor) MakeResponse(ctx context.Context, text string, chatID int, userName string) error {
 
 	if text != "" && text[0] == '/' {
 		text = strings.TrimSpace(text)
@@ -62,7 +60,7 @@ func (p *Processor) MakeResponse(text string, chatID int, userName string) error
 			return errWrap.Wrap("/start", err)
 		}
 	case "/delete":
-		err := p.db.Delete(p.ctx, userName, text, deleteAll)
+		err := p.db.Delete(ctx, userName, text, deleteAll)
 		if errors.Is(err, sql.ErrNoRows) {
 			_ = p.client.SendMessage(chatID, EmptyPageMessage)
 			return nil
@@ -72,7 +70,7 @@ func (p *Processor) MakeResponse(text string, chatID int, userName string) error
 		}
 		_ = p.client.SendMessage(chatID, DeleteCommand)
 	case "/check":
-		dates, err := p.db.Extract(p.ctx, userName, singleLimit)
+		dates, err := p.db.Extract(ctx, userName, singleLimit)
 
 		if err != nil {
 			return errWrap.Wrap("can't check text (makeResponse)", err)
@@ -83,13 +81,13 @@ func (p *Processor) MakeResponse(text string, chatID int, userName string) error
 			return nil
 		}
 		_ = p.client.SendMessage(chatID, dates[0])
-		err = p.db.Delete(p.ctx, userName, dates[0], deleteSpecific)
+		err = p.db.Delete(ctx, userName, dates[0], deleteSpecific)
 
 		if err != nil {
 			return errWrap.Wrap("can't delete page (makeResponse)", err)
 		}
 	case "/check3":
-		dates, err := p.db.Extract(p.ctx, userName, currentLimit)
+		dates, err := p.db.Extract(ctx, userName, currentLimit)
 		if err != nil {
 			return errWrap.Wrap("can't check3 (makeResponse)", err)
 		}
@@ -101,7 +99,7 @@ func (p *Processor) MakeResponse(text string, chatID int, userName string) error
 
 		for _, data := range dates {
 			_ = p.client.SendMessage(chatID, data)
-			_ = p.db.Delete(p.ctx, userName, data, deleteSpecific)
+			_ = p.db.Delete(ctx, userName, data, deleteSpecific)
 		}
 	case "/help":
 		err := p.client.SendMessage(chatID, HelpCommand)
@@ -109,7 +107,7 @@ func (p *Processor) MakeResponse(text string, chatID int, userName string) error
 			log.Print(err)
 		}
 	default:
-		err := p.db.Save(p.ctx, text, userName)
+		err := p.db.Save(ctx, text, userName)
 		if err != nil {
 			return errWrap.Wrap("can't save text (makeResponse)", err)
 		}
